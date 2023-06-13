@@ -1,0 +1,38 @@
+name: 'deploy to AWS S3'
+# live website on internet.
+description: 'deploy a static website via AWS S3.'
+
+inputs:
+  my-s3-bucket:
+  # this "bucket" name is up to you
+    description: 'The s3 bucket name.'
+    required: true
+    # if not required will have to enter a default value.
+  bucket-region: 
+    description: 'The region of the s3 bucket.'
+    required: false
+    default: 'us-east-1'
+    # I am on us-west-1 so I will have to specify this in the deploy.yml worklfow file.
+  dist-folder:
+    description: 'The folder containging the deployable files from the build job'
+    required: true
+    #default: 'dist'
+outputs:
+  my-website-url:
+  # this is a name of my choice
+    description: 'the url of the deployed website'
+    # we don't need a value  here . We needed it for the composite because we needed
+    # to tell Github where to get the value in the script
+    # with custom js action, it will be generated in the main.js
+
+runs:
+  using: 'node16'
+  # this is not 'composite'. This node16 tells github that this is a javacript action
+  main: 'main.js'
+  # not steps. this is the main.js file path. In this case we are locating it in same directory
+  # the above is bare miniumum for javascript custom action.
+  # we do not need a pre: and post: javascript before and after the main for this case
+  # https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions
+  # NOTE: that we do not want to gitignore the node_modules in this deploy-s3-javascript directory
+  # github does not install dependencies with custom js actions so they must be included in the  push to the github repo.
+  # all the code must be avaiable to run the js custom action
